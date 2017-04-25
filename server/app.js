@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const models = require('./models');
 
+
 const app = express();
 
 app.set('views', `${__dirname}/views`);
@@ -82,16 +83,51 @@ app.post('/links',
 app.post('/signup', 
   (req, res, next) => {
     // if (!results)        
-    var url = req.body.url;
-    console.log(url)
-    if (!models.Links.isValidUrl(url)) {
-    // send back a 404 if link is not valid
-    return res.sendStatus(404);
-  }
-  console.log('REQ: ', req);
-  models.Model.create(req)
+    // var url = req.body.url;
+    var user = {
+      username: req.body.username,
+      password: utils.hashPassFunc(req.body.password)
+    }
+    var session = {
+      id: true,
+      timestamp: true,
+      user_id: true,
+      hash: true
+    }
+    return models.User.get(user)
+      .then(userCheck => {
+        if (userCheck !== undefined) {
+          res.redirect('/signup');
+        }
+        else {
+          models.User.create(user);
+          // console.log(session)
+          // models.Session.create(session);
+          res.redirect('/');
+        }
+          res.end();
+        
+      })
 })
 
+app.post('/login',
+  (req, res, next) => {
+    var user = {
+      username: req.body.username,
+      password: utils.hashPassFunc(req.body.password)
+    }
+
+    return models.User.get(user)
+    .then(userCheck => {
+      if (userCheck) {
+        res.redirect('/');
+      }
+      else {
+        res.redirect('/login')
+      }
+      res.end();
+    })
+  })
 
 /************************************************************/
 // Handle the code parameter route last - if all other routes fail

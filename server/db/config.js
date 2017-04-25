@@ -31,7 +31,17 @@ module.exports = (db) => {
         CREATE TABLE IF NOT EXISTS users (
           id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
           username VARCHAR(20) UNIQUE,
-          password VARCHAR(20),
+          password VARCHAR(60),
+          timestamp TIMESTAMP
+        );`) ;
+    })
+    .then(() => {
+      // Create clicks table
+      return db.queryAsync(`
+        CREATE TABLE IF NOT EXISTS sessions (
+          id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+          user_id VARCHAR(20) UNIQUE,
+          hash VARCHAR(60),
           timestamp TIMESTAMP
         );`) ;
     })
