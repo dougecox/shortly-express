@@ -79,7 +79,18 @@ app.post('/links',
 /************************************************************/
 // Write your authentication routes here
 /************************************************************/
-
+app.post('/signup', 
+  (req, res, next) => {
+    // if (!results)        
+    var url = req.body.url;
+    console.log(url)
+    if (!models.Links.isValidUrl(url)) {
+    // send back a 404 if link is not valid
+    return res.sendStatus(404);
+  }
+  console.log('REQ: ', req);
+  models.Model.create(req)
+})
 
 
 /************************************************************/
